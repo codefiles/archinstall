@@ -135,30 +135,6 @@ class Journald:
 		log_adapter.log(level, message)
 
 
-def check_log_permissions():
-	filename = storage.get('LOG_FILE', None)
-
-	if not filename:
-		return
-
-	log_dir = storage.get('LOG_PATH', Path('./'))
-	absolute_logfile = log_dir / filename
-
-	try:
-		log_dir.mkdir(exist_ok=True, parents=True)
-		with absolute_logfile.open('a') as fp:
-			fp.write('')
-	except PermissionError:
-		# Fallback to creating the log file in the current folder
-		fallback_log_file = Path('./').absolute() / filename
-		absolute_logfile = fallback_log_file
-		absolute_logfile.mkdir(exist_ok=True, parents=True)
-		storage['LOG_PATH'] = Path('./').absolute()
-
-		err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
-		warn(err_string)
-
-
 def _supports_color() -> bool:
 	"""
 	Found first reference here:
@@ -300,6 +276,20 @@ def log(
 	if filename := storage.get('LOG_FILE', None):
 		log_dir = storage.get('LOG_PATH', Path('./'))
 		absolute_logfile = log_dir / filename
+
+		try:
+			log_dir.mkdir(exist_ok=True, parents=True)
+			with absolute_logfile.open('a') as fp:
+				fp.write('')
+		except PermissionError:
+			# Fallback to creating the log file in the current folder
+			fallback_log_file = Path('./').absolute() / filename
+			absolute_logfile = fallback_log_file
+			absolute_logfile.mkdir(exist_ok=True, parents=True)
+			storage['LOG_PATH'] = Path('./').absolute()
+
+			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
+			warn(err_string)
 
 		with open(absolute_logfile, 'a') as fp:
 			fp.write(f"{orig_string}\n")
