@@ -1,8 +1,8 @@
-<!-- <div align="center"> -->
-<img src="https://github.com/archlinux/archinstall/raw/master/docs/logo.png" alt="drawing" width="200"/>
+# Arch Installer Development
 
-<!-- </div> -->
-# Arch Installer
+A fork containing fixes to be upstreamed.
+
+# Upstream
 [![Lint Python and Find Syntax Errors](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml/badge.svg)](https://github.com/archlinux/archinstall/actions/workflows/flake8.yaml)
 
 Just another guided/automated [Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux) installer with a twist.
