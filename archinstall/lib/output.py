@@ -273,26 +273,28 @@ def log(
 
 	# If a logfile is defined in storage,
 	# we use that one to output everything
-	if filename := storage.get('LOG_FILE', None):
-		log_dir = storage.get('LOG_PATH', Path('./'))
-		absolute_logfile = log_dir / filename
+	filename = storage.get('LOG_FILE', None)
+	log_dir = storage.get('LOG_PATH', Path().cwd())
 
-		try:
-			log_dir.mkdir(exist_ok=True, parents=True)
-			with absolute_logfile.open('a') as fp:
-				fp.write('')
-		except PermissionError:
-			# Fallback to creating the log file in the current folder
-			fallback_log_file = Path('./').absolute() / filename
-			absolute_logfile = fallback_log_file
-			absolute_logfile.mkdir(exist_ok=True, parents=True)
-			storage['LOG_PATH'] = Path('./').absolute()
+	if not filename:
+		raise ValueError('No log file name defined')
 
-			err_string = f"Not enough permission to place log file at {absolute_logfile}, creating it in {fallback_log_file} instead."
-			warn(err_string)
+	log_file = log_dir / filename
 
-		with open(absolute_logfile, 'a') as fp:
-			fp.write(f"{orig_string}\n")
+	try:
+		log_dir.mkdir(exist_ok=True, parents=True)
+		with log_file.open('a') as fp:
+			fp.write(f'{orig_string}\n')
+	except PermissionError:
+		# Fallback to creating the log file in the current directory
+		fallback_dir = Path().cwd()
+		fallback_log_file = fallback_dir / filename
+
+		storage['LOG_PATH'] = fallback_dir
+		warn(f'Not enough permission to place log file at {log_file}, creating it in {fallback_log_file} instead')
+
+		with fallback_log_file.open('a') as fp:
+			fp.write(f'{orig_string}\n')
 
 	Journald.log(text, level=level)
 
