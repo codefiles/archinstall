@@ -44,7 +44,7 @@ jobs:
         run: |
           truncate -s 5G testimage.img
           losetup -f -P ./testimage.img
-          archinstall --config examples/config-test.json --creds examples/creds-sample.json --silent
+          sudo archinstall --config examples/config-test.json --creds examples/creds-sample.json --silent
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall
