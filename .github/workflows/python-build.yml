@@ -10,6 +10,9 @@ jobs:
     container:
       image: archlinux:latest
       options: --privileged
+      volumes:
+        - /etc/machine-id:/etc/machine-id
+        - /dev:/dev
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -44,7 +47,7 @@ jobs:
         run: |
           truncate -s 5G testimage.img
           losetup -f -P ./testimage.img
-          sudo archinstall --config examples/config-test.json --creds examples/creds-sample.json --silent
+          archinstall --config examples/config-test.json --creds examples/creds-sample.json --silent
       - uses: actions/upload-artifact@v3
         with:
           name: archinstall
