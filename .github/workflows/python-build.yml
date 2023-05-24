@@ -20,13 +20,7 @@ jobs:
     - name: Initialize Pacman keyring
       run: pacman-key --init
     - name: Upgrade system and install packages
-      run: pacman -Syu --noconfirm \
-        python \
-        python-build \
-        python-installer \
-        python-setuptools \
-        python-wheel \
-        python-pyparted
+      run: pacman -Syu --noconfirm python python-build python-installer python-setuptools python-wheel python-pyparted
     - name: Build archinstall
       run: python -m build --wheel --no-isolation
     - name: Install archinstall
@@ -42,10 +36,7 @@ jobs:
       run: |
         truncate -s 5G testimage.img
         losetup -f -P ./testimage.img
-        archinstall \
-          --config examples/config-test.json \
-          --creds examples/creds-sample.json \
-          --silent
+        archinstall --config examples/config-test.json --creds examples/creds-sample.json --silent
     - uses: actions/upload-artifact@v3
       with:
         name: archinstall
