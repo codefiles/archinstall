@@ -159,6 +159,13 @@ class SysInfo:
 		return os.path.isdir('/sys/firmware/efi')
 
 	@staticmethod
+	def uefi_platform() -> str:
+		with open('/sys/firmware/efi/fw_platform_size') as size:
+			if size.read() == '64\n':
+				return 'x86_64'
+			return 'i386'
+
+	@staticmethod
 	def _graphics_devices() -> Dict[str, str]:
 		cards: Dict[str, str] = {}
 		for line in SysCommand("lspci"):
