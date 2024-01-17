@@ -200,6 +200,9 @@ class DeviceHandler(object):
 		command = ''
 
 		match fs_type:
+			case FilesystemType.Bcachefs:
+				options += ['format']
+				command += 'bcachefs'
 			case FilesystemType.Btrfs:
 				options += ['-f']
 				command += 'mkfs.btrfs'
@@ -360,7 +363,14 @@ class DeviceHandler(object):
 			length=length_sector.value
 		)
 
-		filesystem = FileSystem(type=part_mod.safe_fs_type.value, geometry=geometry)
+		# Parted does not have a file system type for bcachefs as of version 3.6, use
+		# ext4 in its place as that will results in a type of native Linux file system
+		if part_mod.safe_fs_type == FilesystemType.Bcachefs:
+			fs_type = FilesystemType.Ext4.value
+		else:
+			fs_type = part_mod.safe_fs_type.value
+
+		filesystem = FileSystem(type=fs_type, geometry=geometry)
 
 		partition = Partition(
 			disk=disk,

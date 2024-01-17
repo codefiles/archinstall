@@ -12,6 +12,7 @@ url="https://github.com/archlinux/archinstall"
 license=(GPL3)
 depends=(
   'arch-install-scripts'
+  'bcachefs-tools'
   'btrfs-progs'
   'coreutils'
   'cryptsetup'

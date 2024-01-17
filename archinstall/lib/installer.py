@@ -237,7 +237,13 @@ class Installer:
 		# it would be none if it's btrfs as the subvolumes will have the mountpoints defined
 		if part_mod.mountpoint and part_mod.dev_path:
 			target = self.target / part_mod.relative_mountpoint
-			disk.device_handler.mount(part_mod.dev_path, target, options=part_mod.mount_options)
+
+			if part_mod.fs_type == disk.FilesystemType.Bcachefs:
+				mount_fs = part_mod.fs_type.value
+			else:
+				mount_fs = None
+
+			disk.device_handler.mount(part_mod.dev_path, target, mount_fs, options=part_mod.mount_options)
 
 		if part_mod.fs_type == disk.FilesystemType.Btrfs and part_mod.dev_path:
 			self._mount_btrfs_subvol(part_mod.dev_path, part_mod.btrfs_subvols)
